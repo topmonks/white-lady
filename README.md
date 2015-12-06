@@ -6,7 +6,7 @@ npm install --save-dev white-lady mocha-generators
 mocha --ui white-lady
 ```
 
-```
+```javascript
 require('mocha-generators').install();
 const expect = require('chai').expect;
 
