@@ -2,11 +2,12 @@
 Mocha interface for Nightmare driven tests
 
 ```
-npm install white-lady
+npm install --save-dev white-lady mocha-generators
 mocha --ui white-lady
 ```
 
 ```
+require('mocha-generators').install();
 const expect = require('chai').expect;
 
 describePage('Home page', '/', function() {

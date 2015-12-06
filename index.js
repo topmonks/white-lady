@@ -1,13 +1,13 @@
 /**
  * @copyright 2015 Topmonks s.r.o.
  */
-require('mocha-generators').install();
 const Mocha = require('mocha');
 const Suite = require('mocha/lib/suite');
 const Test = require('mocha/lib/test');
 const Nightmare = require('nightmare');
 const url = require('url');
 
+const DEBUG = Boolean(process.env.DEBUG);
 const ROOT_URL = process.env.ROOT_URL || 'http://localhost:3001';
 console.log('Testing server:', ROOT_URL);
 const page = path => url.resolve(ROOT_URL, path);
@@ -25,37 +25,22 @@ Nightmare.prototype.textOf = function() {
     return this;
 };
 
+/**
+ *
+ * @param {Suite} suite Root suite.
+ * @type {Function}
+ */
 module.exports = Mocha.interfaces['white-lady'] = function(suite) {
     var suites = [suite];
 
     suite.on('pre-require', function(context, file, mocha) {
-        /**
-         * Execute before running tests.
-         */
-        context.before = function (fn) {
-            suites[0].beforeAll(fn);
-        };
+        var common = require('mocha/lib/interfaces/common')(suites, context);
 
-        /**
-         * Execute after running tests.
-         */
-        context.after = function (fn) {
-            suites[0].afterAll(fn);
-        };
-
-        /**
-         * Execute before each test case.
-         */
-        context.beforeEach = function (fn) {
-            suites[0].beforeEach(fn);
-        };
-
-        /**
-         * Execute after each test case.
-         */
-        context.afterEach = function (fn) {
-            suites[0].afterEach(fn);
-        };
+        context.before = common.before;
+        context.after = common.after;
+        context.beforeEach = common.beforeEach;
+        context.afterEach = common.afterEach;
+        context.run = mocha.options.delay && common.runWithSuite(suite);
 
         /**
          * Describe a "suite" with the given `title` and callback `fn` containing
@@ -78,18 +63,19 @@ module.exports = Mocha.interfaces['white-lady'] = function(suite) {
          */
         context.describePage = function(title, path, fn) {
             var suite = Suite.create(suites[0], title);
+            suite.file = file;
             suites.unshift(suite);
 
             var nightmare;
-            context.before(function() {
-                this.page = nightmare = new Nightmare();
+            suite.beforeAll(function() {
+                this.page = nightmare = new Nightmare({ show: DEBUG });
             });
-            context.beforeEach(function() {
+            suite.beforeEach(function() {
                 nightmare.goto(page(path));
             });
-            context.after(function*() {
+            suite.afterAll(function(done) {
                 this.page = null;
-                yield nightmare.end();
+                nightmare.end(done);
             });
 
             fn.call(suite);
@@ -126,6 +112,7 @@ module.exports = Mocha.interfaces['white-lady'] = function(suite) {
                 fn = null;
             }
             var test = new Test(title, fn);
+            test.file = file;
             suite.addTest(test);
             return test;
         };
@@ -146,3 +133,4 @@ module.exports = Mocha.interfaces['white-lady'] = function(suite) {
         };
     });
 };
+
