@@ -1,9 +1,13 @@
 {
   "name": "white-lady",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "mocha": "^2.3.4",
     "mocha-generators": "^1.2.0",
     "nightmare": "^2.0.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/topmonks/white-lady.git"
   }
 }
