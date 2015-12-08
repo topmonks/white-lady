@@ -1,6 +1,6 @@
 {
   "name": "white-lady",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "dependencies": {
     "mocha": "^2.3.4",
     "mocha-generators": "^1.2.0",
