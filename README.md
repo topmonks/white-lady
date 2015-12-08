@@ -9,7 +9,7 @@ mocha --ui white-lady
 
 Simple test scenario:
 
-```
+```javascript
 require('mocha-generators').install();
 const expect = require('chai').expect;
 
