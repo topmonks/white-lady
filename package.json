@@ -4,7 +4,7 @@
   "dependencies": {
     "mocha": "^2.3.4",
     "mocha-generators": "^1.2.0",
-    "nightmare": "^2.0.8"
+    "nightmare": "^2.1.2"
   },
   "repository": {
     "type": "git",
